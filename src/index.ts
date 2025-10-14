@@ -1,4 +1,3 @@
-// src/index.ts
 import express from 'express';
 import dotenv from 'dotenv';
 import userRoutes from './routes/userRoutes';
@@ -11,8 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use('/users', userRoutes);
-app.use('/animals', animalRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/animals', animalRoutes);
 
 app.get('/', (req, res) => {
   res.send('Backend PetGo rodando!');
@@ -21,7 +20,7 @@ app.get('/', (req, res) => {
 async function startServer() {
   try {
     const conn = await db.getConnection();
-    await conn.query('SELECT 1'); // teste de conexão
+    await conn.query('SELECT 1');
     conn.release();
     console.log('Conectado ao MySQL!');
     app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
@@ -31,4 +30,8 @@ async function startServer() {
   }
 }
 
-startServer();
+if (require.main === module) {
+  startServer();
+}
+
+export default app;
