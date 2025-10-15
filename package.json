@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "test": "jest --detectOpenHandles --forceExit"
+    "test": "jest --detectOpenHandles --forceExit --runInBand"
   },
   "devDependencies": {
     "@types/dotenv": "^6.1.1",

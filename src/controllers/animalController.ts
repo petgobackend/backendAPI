@@ -51,9 +51,15 @@ export const updateAnimal = async (req: Request, res: Response) => {
   const { name, species, breed, latitude, longitude } = req.body;
   const conn = await db.getConnection();
 
+  if (!name || !species) {
+    return res.status(400).json({ error: 'Nome e espécie são obrigatórios.' });
+  }
+
   try {
     await conn.query(
-      `UPDATE animals SET name = ?, species = ?, breed = ?, latitude = ?, longitude = ? WHERE id = ?`,
+      `UPDATE animals 
+       SET name = ?, species = ?, breed = ?, latitude = ?, longitude = ?
+       WHERE id = ?`,
       [name, species, breed, latitude, longitude, id]
     );
 

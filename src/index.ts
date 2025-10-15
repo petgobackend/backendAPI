@@ -10,8 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use('/api/users', userRoutes);
-app.use('/api/animals', animalRoutes);
+app.use('/users', userRoutes);
+app.use('/animals', animalRoutes);
 
 app.get('/', (req, res) => {
   res.send('Backend PetGo rodando!');

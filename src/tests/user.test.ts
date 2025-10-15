@@ -1,18 +1,13 @@
 import request from 'supertest';
-import app from '../index'; // 
-import db from '../utils/db';
+import app from '../index';
 
 describe('User Controller', () => {
-  afterAll(async () => {
-    await db.end();
-  });
-
   it('deve criar um novo usuário', async () => {
     const response = await request(app)
       .post('/users')
-      .send({ name: 'Teste User', email: 'teste@example.com' });
+      .send({ name: 'Teste User', email: 'teste2@example.com' });
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('id');
     expect(response.body.name).toBe('Teste User');
   });

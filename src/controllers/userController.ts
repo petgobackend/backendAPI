@@ -27,7 +27,12 @@ export const createUser = async (req: Request, res: Response) => {
       'INSERT INTO users (name, email) VALUES (?, ?)',
       [name, email]
     );
-    res.status(201).json({ id: (result as any).insertId, name, email });
+
+    res.status(201).json({
+      id: (result as any).insertId,
+      name,
+      email,
+    });
   } catch (err) {
     console.error('Erro ao criar usuário:', err);
     res.status(500).json({ error: 'Erro ao criar usuário.' });
@@ -46,7 +51,10 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 
   try {
-    await conn.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, id]);
+    await conn.query(
+      'UPDATE users SET name = ?, email = ? WHERE id = ?',
+      [name, email, id]
+    );
     res.status(200).json({ id, name, email });
   } catch (err) {
     console.error('Erro ao atualizar usuário:', err);
@@ -59,6 +67,7 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   const conn = await db.getConnection();
+
   try {
     await conn.query('DELETE FROM users WHERE id = ?', [id]);
     res.status(200).json({ message: 'Usuário deletado com sucesso.' });
