@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import path from 'path'; // Adicionado
 import userRoutes from './routes/userRoutes';
 import animalRoutes from './routes/animalRoutes';
 import db from './utils/db';
@@ -11,8 +12,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-
 app.use(express.json());
+
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
 app.use('/users', userRoutes);
 app.use('/animals', animalRoutes);
 
@@ -38,4 +41,3 @@ if (require.main === module) {
 }
 
 export default app;
-
