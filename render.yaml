@@ -2,15 +2,17 @@ services:
   - type: web
     name: petgo-backend-api
     runtime: node
+    plan: free
+    autoDeploy: true
     buildCommand: |
       npm install
       npm run build
     startCommand: node dist/index.js
-    autoDeploy: true
-    plan: free
+    healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 3000
       - key: DATABASE_URL
+        value: <YOUR_DATABASE_URL_HERE>
