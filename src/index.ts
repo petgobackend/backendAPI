@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import userRoutes from './routes/userRoutes';
 import animalRoutes from './routes/animalRoutes';
 import db from './utils/db';
@@ -8,6 +9,8 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(cors());
 
 app.use(express.json());
 app.use('/users', userRoutes);
@@ -35,3 +38,4 @@ if (require.main === module) {
 }
 
 export default app;
+
