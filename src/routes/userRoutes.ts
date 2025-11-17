@@ -1,22 +1,31 @@
 import { Router } from 'express';
-// Adiciona a importação do loginUser
 import {
   getUsers,
+  getUserById,
   createUser,
   updateUser,
+  updatePassword,
   deleteUser,
-  loginUser 
+  loginUser
 } from '../controllers/userController';
+import authMiddleware from '../middlewares/auth'; 
 
 const router = Router();
 
-// --- Rotas CRUD de Usuário ---
-router.get('/', getUsers);
+// Rotas NÃO PROTEGIDAS (Auth)
 router.post('/', createUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.post('/login', loginUser);
 
-// --- Rota de Autenticação ---
-router.post('/login', loginUser); // Rota de login adicionada
+// Rotas PROTEGIDAS (Acesso via Token)
+
+// 1. Rota de ALTERAÇÃO DE SENHA (MAIS ESPECÍFICA, deve vir primeiro)
+router.put('/:id/password', authMiddleware, updatePassword);
+
+// 2. Rotas CRUD (Mais genéricas com :id)
+router.get('/', getUsers); 
+router.get('/:id', authMiddleware, getUserById); //  GET para buscar dados
+router.put('/:id', authMiddleware, updateUser);
+router.delete('/:id', authMiddleware, deleteUser);
+
 
 export default router;

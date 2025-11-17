@@ -11,7 +11,7 @@ const pool = mysql.createPool({
 });
 
 pool.getConnection()
-  .then(() => console.log('✅ Pool conectado ao banco Railway!'))
-  .catch((err) => console.error('❌ Erro ao conectar no banco:', err));
+  .then(() => console.log(' Pool conectado ao banco Railway!'))
+  .catch((err) => console.error(' Erro ao conectar no banco:', err));
 
 export default pool;
