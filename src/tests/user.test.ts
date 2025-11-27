@@ -9,9 +9,12 @@ jest.mock('bcrypt', () => ({
   compare: jest.fn().mockImplementation(async (pwd: string, hashed: string) => hashed === `hashed:${pwd}`),
 }));
 
-// jwt mock
 jest.mock('jsonwebtoken', () => ({
-  sign: jest.fn().mockImplementation(() => 'mock.jwt.token'),
+  sign: jest.fn().mockReturnValue('mock.jwt.token'),
+  verify: jest.fn().mockReturnValue({
+    id: 1,
+    email: 'mock@example.com'
+  })
 }));
 
 type UserRow = {
@@ -122,6 +125,13 @@ beforeEach(() => {
 });
 
 /* ===========================
+   HELPERS
+   =========================== */
+
+// Cabeçalho de auth para usar nas rotas protegidas
+const auth = () => ({ Authorization: 'Bearer mock.jwt.token' });
+
+/* ===========================
    TESTES
    =========================== */
 
@@ -226,11 +236,14 @@ describe('User Controller', () => {
     });
     const id = created.body.data.id;
 
-    const res = await request(app).put(`/users/${id}`).send({
-      name: 'New',
-      email: 'new@example.com',
-      cpf: '123.456.789-00',
-    });
+    const res = await request(app)
+      .put(`/users/${id}`)
+      .set(auth())
+      .send({
+        name: 'New',
+        email: 'new@example.com',
+        cpf: '123.456.789-00',
+      });
 
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('success');
@@ -246,20 +259,26 @@ describe('User Controller', () => {
     });
     const id = created.body.data.id;
 
-    const res = await request(app).put(`/users/${id}`).send({
-      name: 'Only Name', // faltando email e cpf
-    });
+    const res = await request(app)
+      .put(`/users/${id}`)
+      .set(auth())
+      .send({
+        name: 'Only Name', // faltando email e cpf
+      });
 
     expect(res.status).toBe(400);
     expect(res.body.status).toBe('error');
   });
 
   it('deve retornar 404 se usuário não existir no update', async () => {
-    const res = await request(app).put('/users/9999').send({
-      name: 'X',
-      email: 'x@example.com',
-      cpf: '000.000.000-00',
-    });
+    const res = await request(app)
+      .put('/users/9999')
+      .set(auth())
+      .send({
+        name: 'X',
+        email: 'x@example.com',
+        cpf: '000.000.000-00',
+      });
     expect(res.status).toBe(404);
     expect(res.body.status).toBe('error');
     expect(res.body.message).toMatch(/não encontrado/i);
@@ -282,11 +301,14 @@ describe('User Controller', () => {
 
     mem.forceDuplicateOnUpdate = true;
 
-    const res = await request(app).put(`/users/${a.body.data.id}`).send({
-      name: 'A2',
-      email: 'b@example.com',
-      cpf: '111.111.111-11',
-    });
+    const res = await request(app)
+      .put(`/users/${a.body.data.id}`)
+      .set(auth())
+      .send({
+        name: 'A2',
+        email: 'b@example.com',
+        cpf: '111.111.111-11',
+      });
 
     expect(res.status).toBe(409);
     expect(res.body.status).toBe('error');
@@ -302,11 +324,14 @@ describe('User Controller', () => {
     const id = created.body.data.id;
 
     mem.forceUpdateServerError = true;
-    const res = await request(app).put(`/users/${id}`).send({
-      name: 'New',
-      email: 'new@example.com',
-      cpf: '123.456.789-00',
-    });
+    const res = await request(app)
+      .put(`/users/${id}`)
+      .set(auth())
+      .send({
+        name: 'New',
+        email: 'new@example.com',
+        cpf: '123.456.789-00',
+      });
 
     expect(res.status).toBe(500);
     expect(res.body.status).toBe('error');
@@ -322,13 +347,13 @@ describe('User Controller', () => {
     });
     const id = created.body.data.id;
 
-    const res = await request(app).delete(`/users/${id}`);
+    const res = await request(app).delete(`/users/${id}`).set(auth());
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('success');
   });
 
   it('deve retornar 404 ao deletar usuário inexistente', async () => {
-    const res = await request(app).delete('/users/9999');
+    const res = await request(app).delete('/users/9999').set(auth());
     expect(res.status).toBe(404);
     expect(res.body.status).toBe('error');
   });
@@ -343,7 +368,7 @@ describe('User Controller', () => {
     const id = created.body.data.id;
 
     mem.forceDeleteServerError = true;
-    const res = await request(app).delete(`/users/${id}`);
+    const res = await request(app).delete(`/users/${id}`).set(auth());
     expect(res.status).toBe(500);
     expect(res.body.status).toBe('error');
   });
