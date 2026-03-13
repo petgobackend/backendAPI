@@ -5,11 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAnimal = exports.updateAnimal = exports.createAnimal = exports.getAnimalById = exports.getAnimals = void 0;
 const db_1 = __importDefault(require("../utils/db"));
-const vision_1 = require("@google-cloud/vision");
+
+//DESATIVADO TEMPORARIAMENTE
+//const vision_1 = require("@google-cloud/vision");
+
 const fs_1 = __importDefault(require("fs"));
-const visionClient = new vision_1.ImageAnnotatorClient({
-    keyFilename: 'gcp-credentials.json'
-});
+
+//DESATIVADO TEMPORARIAMENTE
+//const visionClient = new vision_1.ImageAnnotatorClient({
+  //  keyFilename: 'gcp-credentials.json'
+//});
+
 const getAnimals = async (req, res) => {
     const conn = await db_1.default.getConnection();
     try {
@@ -63,7 +69,7 @@ const createAnimal = async (req, res) => {
         //    fs_1.default.unlinkSync(imagePath);
          //   return res.status(400).json({ error: 'A imagem enviada é inadequada.' });
        // }
-       
+
         const { name, species, breed, latitude, longitude, created_by, health_status } = req.body;
         if (!name || !species || !health_status) {
             fs_1.default.unlinkSync(imagePath);
@@ -99,14 +105,17 @@ const updateAnimal = async (req, res) => {
     try {
         if (req.file) {
             newImagePath = req.file.path;
-            const [result] = await visionClient.safeSearchDetection(newImagePath);
-            const detections = result.safeSearchAnnotation;
-            if (detections?.adult === 'VERY_LIKELY' || detections?.adult === 'LIKELY' ||
-                detections?.violence === 'VERY_LIKELY' || detections?.violence === 'LIKELY' ||
-                detections?.racy === 'VERY_LIKELY' || detections?.racy === 'LIKELY') {
-                fs_1.default.unlinkSync(newImagePath);
-                return res.status(400).json({ error: 'A nova imagem enviada é inadequada.' });
-            }
+
+            //Desativado temporariamente
+           // const [result] = await visionClient.safeSearchDetection(newImagePath);
+           // const detections = result.safeSearchAnnotation;
+           // if (detections?.adult === 'VERY_LIKELY' || detections?.adult === 'LIKELY' ||
+             //   detections?.violence === 'VERY_LIKELY' || detections?.violence === 'LIKELY' ||
+              //  detections?.racy === 'VERY_LIKELY' || detections?.racy === 'LIKELY') {
+              //  fs_1.default.unlinkSync(newImagePath);
+              //  return res.status(400).json({ error: 'A nova imagem enviada é inadequada.' });
+           // }
+           
         }
         let query = 'UPDATE animals SET name = ?, species = ?, breed = ?, latitude = ?, longitude = ?, health_status = ?';
         const params = [name, species, breed, latitude, longitude, health_status];
