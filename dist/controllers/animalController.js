@@ -115,7 +115,7 @@ const updateAnimal = async (req, res) => {
               //  fs_1.default.unlinkSync(newImagePath);
               //  return res.status(400).json({ error: 'A nova imagem enviada é inadequada.' });
            // }
-           
+
         }
         let query = 'UPDATE animals SET name = ?, species = ?, breed = ?, latitude = ?, longitude = ?, health_status = ?';
         const params = [name, species, breed, latitude, longitude, health_status];
