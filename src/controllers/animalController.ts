@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import db from '../utils/db';
-import { ImageAnnotatorClient } from '@google-cloud/vision';
+//Desativado Temporariamente
+//import { ImageAnnotatorClient } from '@google-cloud/vision';
 import fs from 'fs';
 
-const visionClient = new ImageAnnotatorClient({
-  keyFilename: 'gcp-credentials.json'
-});
+// DESATIVADO TEMPORARIAMENTE
+//const visionClient = new ImageAnnotatorClient({
+ // keyFilename: 'gcp-credentials.json'
+//});
 
 export const getAnimals = async (req: Request, res: Response) => {
   const conn = await db.getConnection();
@@ -48,17 +50,19 @@ export const createAnimal = async (req: Request, res: Response) => {
   const conn = await db.getConnection();
   
   try {
-    const [result] = await visionClient.safeSearchDetection(imagePath);
-    const detections = result.safeSearchAnnotation;
 
-    if (
-      detections?.adult === 'VERY_LIKELY' || detections?.adult === 'LIKELY' ||
-      detections?.violence === 'VERY_LIKELY' || detections?.violence === 'LIKELY' ||
-      detections?.racy === 'VERY_LIKELY' || detections?.racy === 'LIKELY'
-    ) {
-      fs.unlinkSync(imagePath);
-      return res.status(400).json({ error: 'A imagem enviada é inadequada.' });
-    }
+    // DESATIVADO TEMPORARIAMENTE
+    //const [result] = await visionClient.safeSearchDetection(imagePath);
+    //const detections = result.safeSearchAnnotation;
+
+    //if (
+    //  detections?.adult === 'VERY_LIKELY' || detections?.adult === 'LIKELY' ||
+    //  detections?.violence === 'VERY_LIKELY' || detections?.violence === 'LIKELY' ||
+    //  detections?.racy === 'VERY_LIKELY' || detections?.racy === 'LIKELY'
+   // ) {
+     /// fs.unlinkSync(imagePath);
+      //return res.status(400).json({ error: 'A imagem enviada é inadequada.' });
+    //}
 
     const { name, species, breed, latitude, longitude, created_by, health_status } = req.body;
 
@@ -102,17 +106,18 @@ export const updateAnimal = async (req: Request, res: Response) => {
   try {
     if (req.file) {
       newImagePath = req.file.path;
-      const [result] = await visionClient.safeSearchDetection(newImagePath);
-      const detections = result.safeSearchAnnotation;
+      // DESATIVADO TEMPORARIAMENTE
+     // const [result] = await visionClient.safeSearchDetection(newImagePath);
+      //const detections = result.safeSearchAnnotation;
 
-      if (
-        detections?.adult === 'VERY_LIKELY' || detections?.adult === 'LIKELY' ||
-        detections?.violence === 'VERY_LIKELY' || detections?.violence === 'LIKELY' ||
-        detections?.racy === 'VERY_LIKELY' || detections?.racy === 'LIKELY'
-      ) {
-        fs.unlinkSync(newImagePath);
-        return res.status(400).json({ error: 'A nova imagem enviada é inadequada.' });
-      }
+      //if (
+        //detections?.adult === 'VERY_LIKELY' || detections?.adult === 'LIKELY' ||
+        //detections?.violence === 'VERY_LIKELY' || detections?.violence === 'LIKELY' ||
+        //detections?.racy === 'VERY_LIKELY' || detections?.racy === 'LIKELY'
+      //) {
+       // fs.unlinkSync(newImagePath);
+        ///return res.status(400).json({ error: 'A nova imagem enviada é inadequada.' });
+      //}
     }
 
     let query = 'UPDATE animals SET name = ?, species = ?, breed = ?, latitude = ?, longitude = ?, health_status = ?';
