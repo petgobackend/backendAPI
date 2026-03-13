@@ -52,14 +52,18 @@ const createAnimal = async (req, res) => {
     const imagePath = req.file.path;
     const conn = await db_1.default.getConnection();
     try {
-        const [result] = await visionClient.safeSearchDetection(imagePath);
-        const detections = result.safeSearchAnnotation;
-        if (detections?.adult === 'VERY_LIKELY' || detections?.adult === 'LIKELY' ||
-            detections?.violence === 'VERY_LIKELY' || detections?.violence === 'LIKELY' ||
-            detections?.racy === 'VERY_LIKELY' || detections?.racy === 'LIKELY') {
-            fs_1.default.unlinkSync(imagePath);
-            return res.status(400).json({ error: 'A imagem enviada é inadequada.' });
-        }
+
+        // AJUSTE FEITO POIS A API NÃO ESTÁ FATURANDO
+
+      //  const [result] = await visionClient.safeSearchDetection(imagePath);
+      //  const detections = result.safeSearchAnnotation;
+       // if (detections?.adult === 'VERY_LIKELY' || detections?.adult === 'LIKELY' ||
+        //    detections?.violence === 'VERY_LIKELY' || detections?.violence === 'LIKELY' ||
+        //    detections?.racy === 'VERY_LIKELY' || detections?.racy === 'LIKELY') {
+        //    fs_1.default.unlinkSync(imagePath);
+         //   return res.status(400).json({ error: 'A imagem enviada é inadequada.' });
+       // }
+       
         const { name, species, breed, latitude, longitude, created_by, health_status } = req.body;
         if (!name || !species || !health_status) {
             fs_1.default.unlinkSync(imagePath);
